@@ -67,6 +67,10 @@ class StatelessCheckpointingWandb:
         store_dir: Union[str, pathlib.Path],
     ):
         checkpoint_path = pathlib.Path(store_dir) / "checkpoint.pth"
+
+        if not checkpoint_path.parent.exists():
+            checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+
         torch.save(model, checkpoint_path)
         checkpoint_object = wandb.Artifact(
             type="model", name=f"exp-{self.run.id}.model-{model_name}"
