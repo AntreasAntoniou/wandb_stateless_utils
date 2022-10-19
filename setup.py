@@ -18,7 +18,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="wandbless",  # Required
-    version="0.0.4",  # Required
+    version="0.0.5",  # Required
     description="A set of utilities that allow wandb to be use to convert an ML "
     "system into a stateless system",  # Optional
     long_description=long_description,  # Optional

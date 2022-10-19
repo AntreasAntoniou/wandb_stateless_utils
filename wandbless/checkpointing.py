@@ -63,7 +63,6 @@ class StatelessCheckpointingWandb:
     def save(
         self,
         model: Dict[str, Any],
-        model_name: str,
         store_dir: Union[str, pathlib.Path],
     ):
         checkpoint_path = pathlib.Path(store_dir) / "checkpoint.pth"
@@ -72,20 +71,17 @@ class StatelessCheckpointingWandb:
             checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
 
         torch.save(model, checkpoint_path)
-        checkpoint_object = wandb.Artifact(
-            type="model", name=f"exp-{self.run.id}.model-{model_name}"
-        )
+        checkpoint_object = wandb.Artifact(type="model", name=f"exp-{self.run.id}")
         checkpoint_object.add_file(checkpoint_path.as_posix())
         wandb.log_artifact(checkpoint_object)
 
     def restore(
         self,
         store_dir: Union[str, pathlib.Path],
-        model_name: str,
         version: str,
     ):
         artifact = self.run.use_artifact(
-            f"{self.run.entity}/{self.run.project}/exp-{id}.model-{model_name}:{version}",
+            f"{self.run.entity}/{self.run.project}/exp-{self.run.id}:{version}",
             type="model",
         )
         artifact_dir = artifact.download(root=store_dir)
@@ -97,16 +93,14 @@ class StatelessCheckpointingWandb:
     def restore_latest(
         self,
         store_dir: Union[str, pathlib.Path],
-        model_name: str,
     ):
 
-        return self.restore(store_dir, model_name, version="latest")
+        return self.restore(store_dir, version="latest")
 
     def restore_epoch(
         self,
         store_dir: Union[str, pathlib.Path],
-        model_name: str,
         epoch: int,
     ):
 
-        return self.restore(store_dir, model_name, version=f"v{epoch}")
+        return self.restore(store_dir, version=f"v{epoch}")
