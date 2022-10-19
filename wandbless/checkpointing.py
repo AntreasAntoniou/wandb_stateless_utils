@@ -66,11 +66,12 @@ class StatelessCheckpointingWandb:
         model_name: str,
         store_dir: Union[str, pathlib.Path],
     ):
-        torch.save(model.state_dict(), pathlib.Path(store_dir) / "checkpoint.pth")
+        checkpoint_path = pathlib.Path(store_dir) / "checkpoint.pth"
+        torch.save(model.state_dict(), checkpoint_path)
         checkpoint_object = wandb.Artifact(
             type="model", name=f"exp-{self.run.id}.model-{model_name}"
         )
-        checkpoint_object.add_file(store_dir)
+        checkpoint_object.add_file(checkpoint_path.as_posix())
         wandb.log_artifact(checkpoint_object)
 
     def restore(
